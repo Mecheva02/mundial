@@ -1,7 +1,9 @@
 const state = {
+  allData: null,
   data: null,
   live: null,
   liveError: null,
+  playerId: localStorage.getItem("selectedPlayerId") || "",
   filter: "all",
   stage: "all",
   group: "A",
@@ -131,6 +133,7 @@ function bindElements() {
   [
     "sourceStatus",
     "apiStatus",
+    "playerSelect",
     "tokenInput",
     "saveTokenButton",
     "refreshButton",
@@ -152,7 +155,10 @@ function bindElements() {
     "honorsList",
     "scoreTotal",
     "scoreBreakdown",
-    "scoreRows"
+    "scoreRows",
+    "activePlayerName",
+    "activePlayerNameMatches",
+    "activePlayerNameStandings"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -177,9 +183,21 @@ function bindEvents() {
     }
   });
 
+  els.playerSelect.addEventListener("change", (event) => {
+    selectParticipant(event.target.value);
+    setMessage(`Porra de ${state.data.name} cargada.`, "ok");
+  });
+
   els.stageSelect.addEventListener("change", (event) => {
     state.stage = event.target.value;
     renderMatches();
+  });
+
+  els.groupTabs.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-group]");
+    if (!button) return;
+    state.group = button.dataset.group;
+    renderStandings();
   });
 
   els.matchFilters.addEventListener("click", (event) => {
@@ -195,8 +213,8 @@ async function loadPredictions() {
   try {
     const response = await fetch("/api/predictions");
     if (!response.ok) throw new Error("No se pudo leer data/predictions.json");
-    state.data = await response.json();
-    els.sourceStatus.textContent = `${state.data.teams.length} equipos · ${state.data.matches.length} partidos`;
+    state.allData = normalizePredictionPayload(await response.json());
+    selectParticipant(state.playerId || state.allData.participants[0].id, { silent: true });
     setMessage("Datos del Excel cargados.", "ok");
     renderSetupControls();
     renderAll();
@@ -242,22 +260,90 @@ async function refreshLive() {
   }
 }
 
+function normalizePredictionPayload(payload) {
+  const participants = Array.isArray(payload.participants) && payload.participants.length
+    ? payload.participants
+    : [
+        {
+          id: "miguel",
+          name: "Miguel",
+          tournament: payload.tournament,
+          sourceFile: payload.sourceFile,
+          teams: payload.teams || [],
+          matches: payload.matches || [],
+          honors: payload.honors || {}
+        }
+      ];
+
+  return {
+    ...payload,
+    participants: participants.map((participant, index) => ({
+      id: participant.id || `participante-${index + 1}`,
+      name: participant.name || `Participante ${index + 1}`,
+      tournament: participant.tournament || payload.tournament,
+      sourceFile: participant.sourceFile || payload.sourceFile,
+      teams: participant.teams || [],
+      matches: participant.matches || [],
+      honors: participant.honors || {}
+    }))
+  };
+}
+
+function selectParticipant(playerId, options = {}) {
+  if (!state.allData || !state.allData.participants.length) return;
+  const participant =
+    state.allData.participants.find((item) => item.id === playerId) ||
+    state.allData.participants[0];
+
+  state.playerId = participant.id;
+  state.data = participant;
+  localStorage.setItem("selectedPlayerId", participant.id);
+
+  const playerCount = state.allData.participants.length;
+  els.sourceStatus.textContent = `${playerCount} porras · ${participant.matches.length} partidos`;
+
+  renderPlayerOptions();
+  renderActivePlayerLabels();
+
+  if (!options.silent) {
+    renderSetupControls();
+    renderAll();
+  }
+}
+
+function renderPlayerOptions() {
+  if (!state.allData || !els.playerSelect) return;
+  els.playerSelect.innerHTML = state.allData.participants
+    .map(
+      (participant) =>
+        `<option value="${escapeHtml(participant.id)}"${participant.id === state.playerId ? " selected" : ""}>${escapeHtml(participant.name)}</option>`
+    )
+    .join("");
+}
+
+function renderActivePlayerLabels() {
+  if (!state.data) return;
+  const name = state.data.name || "Participante";
+  [els.activePlayerName, els.activePlayerNameMatches, els.activePlayerNameStandings].forEach((element) => {
+    if (element) element.textContent = name;
+  });
+}
+
 function renderSetupControls() {
+  renderPlayerOptions();
+
   const stages = ["all", ...Array.from(new Set(state.data.matches.map((match) => match.stage)))];
+  if (!stages.includes(state.stage)) state.stage = "all";
   els.stageSelect.innerHTML = stages
     .map((stage) => `<option value="${escapeHtml(stage)}">${stage === "all" ? "Todas las fases" : escapeHtml(stage)}</option>`)
     .join("");
+  els.stageSelect.value = state.stage;
 
   const groups = Array.from(new Set(state.data.teams.map((team) => team.group))).sort();
+  if (!groups.includes(state.group)) state.group = groups[0] || "A";
   els.groupTabs.innerHTML = groups
     .map((group) => `<button type="button" data-group="${escapeHtml(group)}">${escapeHtml(group)}</button>`)
     .join("");
-  els.groupTabs.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-group]");
-    if (!button) return;
-    state.group = button.dataset.group;
-    renderStandings();
-  });
 }
 
 function renderAll() {
@@ -308,7 +394,7 @@ function renderScoreRow(row) {
   return `
     <tr class="${row.points > 0 ? "is-points" : ""}">
       <td data-label="Concepto">${escapeHtml(row.concept)}</td>
-      <td data-label="Tu porra">${escapeHtml(row.prediction)}</td>
+      <td data-label="Porra">${escapeHtml(row.prediction)}</td>
       <td data-label="Real">${escapeHtml(row.real)}</td>
       <td data-label="Detalle">${escapeHtml(row.detail)}</td>
       <td data-label="Pts" class="points-cell">${escapeHtml(row.displayPoints ?? row.points)}</td>

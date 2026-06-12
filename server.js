@@ -132,11 +132,20 @@ function pairKey(homeTeam, awayTeam) {
   return `${canonical(homeTeam)}|${canonical(awayTeam)}`;
 }
 
+function predictionMatches(predictions) {
+  if (Array.isArray(predictions.participants) && predictions.participants.length) {
+    return predictions.participants.flatMap((participant) => participant.matches || []);
+  }
+  return predictions.matches || [];
+}
+
 function buildPredictionIndex(predictions) {
   const index = new Map();
-  for (const match of predictions.matches || []) {
-    index.set(pairKey(match.homeTeam, match.awayTeam), { match, reversed: false });
-    index.set(pairKey(match.awayTeam, match.homeTeam), { match, reversed: true });
+  for (const match of predictionMatches(predictions)) {
+    const directKey = pairKey(match.homeTeam, match.awayTeam);
+    const reverseKey = pairKey(match.awayTeam, match.homeTeam);
+    if (!index.has(directKey)) index.set(directKey, { match, reversed: false });
+    if (!index.has(reverseKey)) index.set(reverseKey, { match, reversed: true });
   }
   return index;
 }
@@ -285,7 +294,7 @@ async function espnGetScoreboard(date) {
 async function getEspnData(predictions) {
   const predictionIndex = buildPredictionIndex(predictions);
   const dates = Array.from(
-    new Set((predictions.matches || []).map((match) => dateKey(match.dateTime)).filter(Boolean))
+    new Set(predictionMatches(predictions).map((match) => dateKey(match.dateTime)).filter(Boolean))
   ).sort();
   const results = [];
   const errors = [];

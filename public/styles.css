@@ -155,7 +155,7 @@ select:focus-visible {
 
 .control-band {
   display: grid;
-  grid-template-columns: minmax(220px, 360px) auto auto auto 1fr;
+  grid-template-columns: minmax(150px, 220px) minmax(220px, 360px) auto auto auto 1fr;
   gap: 12px;
   align-items: end;
   padding: 16px;
@@ -185,6 +185,10 @@ select {
   background: #fbfdfe;
   color: var(--ink);
   padding: 0 12px;
+}
+
+.player-field select {
+  width: 100%;
 }
 
 #refreshButton {
@@ -712,7 +716,8 @@ tr.is-top td {
   }
 
   .control-band button,
-  .token-field input {
+  .token-field input,
+  .token-field select {
     width: 100%;
     min-height: 48px;
   }

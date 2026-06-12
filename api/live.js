@@ -86,6 +86,13 @@ function pairKey(homeTeam, awayTeam) {
   return `${canonical(homeTeam)}|${canonical(awayTeam)}`;
 }
 
+function predictionMatches(predictions) {
+  if (Array.isArray(predictions.participants) && predictions.participants.length) {
+    return predictions.participants.flatMap((participant) => participant.matches || []);
+  }
+  return predictions.matches || [];
+}
+
 function dateKey(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
@@ -112,9 +119,11 @@ function relevantDates(matches) {
 
 function buildPredictionIndex(predictions) {
   const index = new Map();
-  for (const match of predictions.matches || []) {
-    index.set(pairKey(match.homeTeam, match.awayTeam), match);
-    index.set(pairKey(match.awayTeam, match.homeTeam), match);
+  for (const match of predictionMatches(predictions)) {
+    const directKey = pairKey(match.homeTeam, match.awayTeam);
+    const reverseKey = pairKey(match.awayTeam, match.homeTeam);
+    if (!index.has(directKey)) index.set(directKey, match);
+    if (!index.has(reverseKey)) index.set(reverseKey, match);
   }
   return index;
 }
@@ -183,7 +192,7 @@ module.exports = async function handler(req, res) {
     const raw = await fs.readFile(path.join(process.cwd(), "data", "predictions.json"), "utf8");
     const predictions = JSON.parse(raw);
     const predictionIndex = buildPredictionIndex(predictions);
-    const dates = relevantDates(predictions.matches || []);
+    const dates = relevantDates(predictionMatches(predictions));
     const settled = await Promise.allSettled(dates.map(fetchScoreboard));
     const errors = [];
     const matches = [];

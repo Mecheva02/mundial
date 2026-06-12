@@ -1,6 +1,11 @@
 # Porra Mundial 2026 local
 
-App local para ver la porra importada desde `celestino2.xlsx`, comparar tus resultados con marcadores reales y ver la clasificacion real al lado de la tuya.
+App local para ver las porras importadas desde Excel, comparar resultados con marcadores reales y ver la clasificacion real al lado de cada porra.
+
+Ahora incluye selector de participante:
+
+- Miguel
+- Gonzalo
 
 ## Arrancar
 
@@ -61,10 +66,16 @@ La app calcula puntos con el PDF de puntuacion:
 
 En eliminatorias, si el cruce real no coincide con tu cruce previsto, no se dan puntos de marcador para ese partido; si uno de tus equipos si aparece en el cruce real, se marca en verde.
 
-## Reimportar el Excel
+## Reimportar los Excel
 
 ```powershell
-python scripts\extract_excel.py "C:\Users\meche\Downloads\celestino2.xlsx"
+python scripts\extract_excel.py
 ```
 
-Eso regenera `data/predictions.json`.
+Eso regenera `data/predictions.json` con las porras de Miguel y Gonzalo.
+
+Si quieres importar un unico Excel:
+
+```powershell
+python scripts\extract_excel.py "C:\ruta\a\porra.xlsx" --id nombre --name "Nombre"
+```

@@ -22,6 +22,10 @@
 
     <main class="app-shell">
       <section class="control-band" aria-label="Conexion de datos reales">
+        <div class="token-field player-field">
+          <label for="playerSelect">Porra activa</label>
+          <select id="playerSelect" aria-label="Elegir participante"></select>
+        </div>
         <div class="token-field">
           <label for="tokenInput">Football-Data token opcional</label>
           <input id="tokenInput" type="password" autocomplete="off" placeholder="ESPN actualiza sin token">
@@ -62,7 +66,7 @@
         <div class="panel-heading">
           <div>
             <p class="eyebrow">Puntos</p>
-            <h2>Tu puntuacion de la porra</h2>
+            <h2>Puntuacion de <span id="activePlayerName">Miguel</span></h2>
           </div>
           <div class="score-total">
             <span>Total</span>
@@ -75,7 +79,7 @@
             <thead>
               <tr>
                 <th>Concepto</th>
-                <th>Tu porra</th>
+                <th>Porra</th>
                 <th>Real</th>
                 <th>Detalle</th>
                 <th>Pts</th>
@@ -91,7 +95,7 @@
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Partidos</p>
-              <h2>Tus resultados vs reales</h2>
+              <h2><span id="activePlayerNameMatches">Miguel</span> vs reales</h2>
             </div>
             <select id="stageSelect" aria-label="Filtrar por fase"></select>
           </div>
@@ -118,7 +122,7 @@
           <div id="classificationNote" class="classification-note"></div>
           <div class="standings-grid">
             <div>
-              <h3>Tu porra</h3>
+              <h3>Porra de <span id="activePlayerNameStandings">Miguel</span></h3>
               <div id="predictedStandings"></div>
             </div>
             <div>
