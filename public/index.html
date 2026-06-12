@@ -21,22 +21,11 @@
     </header>
 
     <main class="app-shell">
-      <section class="control-band" aria-label="Conexion de datos reales">
+      <section class="player-band" aria-label="Selector de porra">
         <div class="token-field player-field">
           <label for="playerSelect">Porra activa</label>
           <select id="playerSelect" aria-label="Elegir participante"></select>
         </div>
-        <div class="token-field">
-          <label for="tokenInput">Football-Data token opcional</label>
-          <input id="tokenInput" type="password" autocomplete="off" placeholder="ESPN actualiza sin token">
-        </div>
-        <button id="saveTokenButton" type="button">Guardar</button>
-        <button id="refreshButton" type="button">Actualizar real</button>
-        <label class="auto-toggle" for="autoRefresh">
-          <input id="autoRefresh" type="checkbox">
-          <span>Auto</span>
-        </label>
-        <div id="message" class="message" role="status"></div>
       </section>
 
       <section class="kpi-grid" aria-label="Resumen">
@@ -62,8 +51,42 @@
         </article>
       </section>
 
+      <section class="top-panels">
+        <aside class="panel standings-panel" aria-label="Clasificacion">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Clasificacion</p>
+              <h2>Grupo <span id="currentGroupLabel">A</span></h2>
+            </div>
+          </div>
+          <div id="groupTabs" class="group-tabs" aria-label="Grupos"></div>
+          <div id="classificationNote" class="classification-note"></div>
+          <div class="standings-grid">
+            <div>
+              <h3>Porra de <span id="activePlayerNameStandings">Miguel</span></h3>
+              <div id="predictedStandings"></div>
+            </div>
+            <div>
+              <h3>Real</h3>
+              <div id="realStandings"></div>
+            </div>
+          </div>
+        </aside>
+
+        <details class="panel honors-panel forecast-panel" aria-label="Cuadro de honor">
+          <summary class="panel-heading">
+            <div>
+              <p class="eyebrow">Cuadro</p>
+              <h2>Pronostico final</h2>
+            </div>
+            <span class="summary-caret">Ver</span>
+          </summary>
+          <div id="honorsList" class="honors-list"></div>
+        </details>
+      </section>
+
       <section class="panel scoring-panel" aria-label="Puntuacion">
-        <div class="panel-heading">
+        <div class="panel-heading compact-heading">
           <div>
             <p class="eyebrow">Puntos</p>
             <h2>Puntuacion de <span id="activePlayerName">Miguel</span></h2>
@@ -91,13 +114,24 @@
       </section>
 
       <section class="workspace">
-        <section class="panel matches-panel" aria-label="Partidos">
+        <section class="panel matches-panel" aria-label="Proximos partidos">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Partidos</p>
-              <h2><span id="activePlayerNameMatches">Miguel</span> vs reales</h2>
+              <h2>Proximos de <span id="activePlayerNameMatches">Miguel</span></h2>
             </div>
             <select id="stageSelect" aria-label="Filtrar por fase"></select>
+          </div>
+
+          <div id="matchesList" class="match-list"></div>
+        </section>
+
+        <section class="panel finalized-panel" aria-label="Partidos finalizados">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Cerrados</p>
+              <h2>Finalizados</h2>
+            </div>
           </div>
 
           <div id="matchFilters" class="segmented" aria-label="Filtros de acierto">
@@ -105,42 +139,24 @@
             <button type="button" data-filter="exact">Exactos</button>
             <button type="button" data-filter="sign">Signo</button>
             <button type="button" data-filter="miss">Fallos</button>
-            <button type="button" data-filter="pending">Pendientes</button>
           </div>
 
-          <div id="matchesList" class="match-list"></div>
+          <div id="finalizedList" class="finalized-list"></div>
         </section>
-
-        <aside class="panel standings-panel" aria-label="Clasificacion">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">Clasificacion</p>
-              <h2>Grupo <span id="currentGroupLabel">A</span></h2>
-            </div>
-          </div>
-          <div id="groupTabs" class="group-tabs" aria-label="Grupos"></div>
-          <div id="classificationNote" class="classification-note"></div>
-          <div class="standings-grid">
-            <div>
-              <h3>Porra de <span id="activePlayerNameStandings">Miguel</span></h3>
-              <div id="predictedStandings"></div>
-            </div>
-            <div>
-              <h3>Real</h3>
-              <div id="realStandings"></div>
-            </div>
-          </div>
-        </aside>
       </section>
 
-      <section class="panel honors-panel" aria-label="Cuadro de honor">
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">Cuadro</p>
-            <h2>Pronostico final</h2>
-          </div>
+      <section class="control-band" aria-label="Conexion de datos reales">
+        <div class="token-field">
+          <label for="tokenInput">Football-Data token opcional</label>
+          <input id="tokenInput" type="password" autocomplete="off" placeholder="ESPN actualiza sin token">
         </div>
-        <div id="honorsList" class="honors-list"></div>
+        <button id="saveTokenButton" type="button">Guardar</button>
+        <button id="refreshButton" type="button">Actualizar real</button>
+        <label class="auto-toggle" for="autoRefresh">
+          <input id="autoRefresh" type="checkbox">
+          <span>Auto</span>
+        </label>
+        <div id="message" class="message" role="status"></div>
       </section>
     </main>
 

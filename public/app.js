@@ -147,6 +147,7 @@ function bindElements() {
     "stageSelect",
     "matchFilters",
     "matchesList",
+    "finalizedList",
     "groupTabs",
     "currentGroupLabel",
     "classificationNote",
@@ -191,6 +192,7 @@ function bindEvents() {
   els.stageSelect.addEventListener("change", (event) => {
     state.stage = event.target.value;
     renderMatches();
+    renderFinalizedMatches();
   });
 
   els.groupTabs.addEventListener("click", (event) => {
@@ -205,7 +207,7 @@ function bindEvents() {
     if (!button) return;
     state.filter = button.dataset.filter;
     els.matchFilters.querySelectorAll("button").forEach((item) => item.classList.toggle("is-active", item === button));
-    renderMatches();
+    renderFinalizedMatches();
   });
 }
 
@@ -351,6 +353,7 @@ function renderAll() {
   renderKpis();
   renderScoring();
   renderMatches();
+  renderFinalizedMatches();
   renderStandings();
   renderHonors();
 }
@@ -391,15 +394,34 @@ function renderScoring() {
 }
 
 function renderScoreRow(row) {
+  const compact = compactScoreConcept(row);
   return `
     <tr class="${row.points > 0 ? "is-points" : ""}">
-      <td data-label="Concepto">${escapeHtml(row.concept)}</td>
+      <td data-label="Concepto" class="score-concept">
+        <strong>${escapeHtml(compact.title)}</strong>
+        <span>${escapeHtml(compact.subtitle)}</span>
+      </td>
       <td data-label="Porra">${escapeHtml(row.prediction)}</td>
       <td data-label="Real">${escapeHtml(row.real)}</td>
       <td data-label="Detalle">${escapeHtml(row.detail)}</td>
       <td data-label="Pts" class="points-cell">${escapeHtml(row.displayPoints ?? row.points)}</td>
     </tr>
   `;
+}
+
+function compactScoreConcept(row) {
+  const concept = String(row.concept || "");
+  const match = concept.match(/^#(\d+)/);
+  if (match) {
+    return { title: `#${match[1]}`, subtitle: row.phase || concept.replace(match[0], "").trim() };
+  }
+
+  const group = concept.match(/Grupo\s+([A-L])/i);
+  if (group) {
+    return { title: `Grupo ${group[1].toUpperCase()}`, subtitle: concept.replace(/Grupo\s+[A-L]\s*Â·?\s*/i, "") || row.phase };
+  }
+
+  return { title: concept, subtitle: row.phase || "" };
 }
 
 function calculateScoring() {
@@ -605,15 +627,35 @@ function scoreFinalHonors() {
 function renderMatches() {
   const rows = state.data.matches
     .map((match) => ({ match, comparison: compareMatch(match) }))
-    .filter(({ match, comparison }) => state.stage === "all" || match.stage === state.stage)
-    .filter(({ comparison }) => filterComparison(comparison));
+    .filter(({ match }) => state.stage === "all" || match.stage === state.stage)
+    .filter(({ comparison }) => !comparison.realFinal)
+    .sort(sortUpcomingRows);
 
   if (!rows.length) {
-    els.matchesList.innerHTML = `<div class="empty-state">No hay partidos para este filtro.</div>`;
+    els.matchesList.innerHTML = `<div class="empty-state">No hay proximos partidos para este filtro.</div>`;
     return;
   }
 
   els.matchesList.innerHTML = rows.map(renderMatchRow).join("");
+}
+
+function renderFinalizedMatches() {
+  const rows = state.data.matches
+    .map((match) => {
+      const comparison = compareMatch(match);
+      const scored = scoreMatchResult(match, comparison);
+      return { match, comparison, scored };
+    })
+    .filter(({ match, comparison }) => (state.stage === "all" || match.stage === state.stage) && comparison.realFinal)
+    .filter(({ comparison }) => filterComparison(comparison))
+    .sort((a, b) => matchTimeValue(a.match) - matchTimeValue(b.match));
+
+  if (!rows.length) {
+    els.finalizedList.innerHTML = `<div class="empty-state">Todavia no hay partidos finalizados para este filtro.</div>`;
+    return;
+  }
+
+  els.finalizedList.innerHTML = rows.map(renderFinalizedRow).join("");
 }
 
 function renderMatchRow({ match, comparison }) {
@@ -662,6 +704,46 @@ function renderMatchRow({ match, comparison }) {
       </div>
     </article>
   `;
+}
+
+function renderFinalizedRow({ match, comparison, scored }) {
+  const quality = comparison.quality || "miss";
+  const detail = scored.detail || "Sin acierto de marcador";
+
+  return `
+    <article class="finished-row" data-quality="${quality}">
+      <div class="finished-head">
+        <span class="finished-number">#${match.id}</span>
+        <span class="finished-stage">${escapeHtml(match.stage)}</span>
+        <strong>${escapeHtml(scored.points)} pts</strong>
+      </div>
+      <div class="finished-body">
+        <div><span>Porra</span><strong>${escapeHtml(fixtureLabel(match.homeTeam, match.awayTeam, match.homeGoals, match.awayGoals))}</strong></div>
+        <div><span>Real</span><strong>${escapeHtml(fixtureLabel(comparison.realHomeTeam, comparison.realAwayTeam, comparison.realHomeGoals, comparison.realAwayGoals))}</strong></div>
+        <p>${escapeHtml(detail)}</p>
+      </div>
+    </article>
+  `;
+}
+
+function sortUpcomingRows(a, b) {
+  const aLive = a.comparison.realLive ? 0 : 1;
+  const bLive = b.comparison.realLive ? 0 : 1;
+  if (aLive !== bLive) return aLive - bLive;
+  return upcomingTimeValue(a.match) - upcomingTimeValue(b.match);
+}
+
+function upcomingTimeValue(match) {
+  const time = matchTimeValue(match);
+  if (!Number.isFinite(time)) return Number.MAX_SAFE_INTEGER;
+  const now = Date.now();
+  if (time >= now - 2 * 60 * 60 * 1000) return time;
+  return time + 365 * 24 * 60 * 60 * 1000;
+}
+
+function matchTimeValue(match) {
+  const time = new Date(match.dateTime).getTime();
+  return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
 }
 
 function renderStandings() {
