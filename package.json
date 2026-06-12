@@ -1,0 +1,10 @@
+{
+  "name": "mundial-porra-local",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "extract": "python scripts/extract_excel.py"
+  }
+}

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0f3d3e">
+    <title>Porra Mundial 2026</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Porra local</p>
+        <h1>Mundial 2026</h1>
+      </div>
+      <div class="top-status" aria-live="polite">
+        <span id="sourceStatus">Excel pendiente</span>
+        <span id="apiStatus">Real sin conectar</span>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="control-band" aria-label="Conexion de datos reales">
+        <div class="token-field">
+          <label for="tokenInput">Football-Data token opcional</label>
+          <input id="tokenInput" type="password" autocomplete="off" placeholder="ESPN actualiza sin token">
+        </div>
+        <button id="saveTokenButton" type="button">Guardar</button>
+        <button id="refreshButton" type="button">Actualizar real</button>
+        <label class="auto-toggle" for="autoRefresh">
+          <input id="autoRefresh" type="checkbox">
+          <span>Auto</span>
+        </label>
+        <div id="message" class="message" role="status"></div>
+      </section>
+
+      <section class="kpi-grid" aria-label="Resumen">
+        <article class="kpi">
+          <span class="kpi-label">Pronosticos</span>
+          <strong id="kpiPredictions">-</strong>
+        </article>
+        <article class="kpi">
+          <span class="kpi-label">Reales cerrados</span>
+          <strong id="kpiFinals">-</strong>
+        </article>
+        <article class="kpi is-good">
+          <span class="kpi-label">Signo acertado</span>
+          <strong id="kpiSigns">-</strong>
+        </article>
+        <article class="kpi is-exact">
+          <span class="kpi-label">Marcador exacto</span>
+          <strong id="kpiExact">-</strong>
+        </article>
+        <article class="kpi is-classified">
+          <span class="kpi-label">Top 2 grupos</span>
+          <strong id="kpiClassified">-</strong>
+        </article>
+      </section>
+
+      <section class="panel scoring-panel" aria-label="Puntuacion">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Puntos</p>
+            <h2>Tu puntuacion de la porra</h2>
+          </div>
+          <div class="score-total">
+            <span>Total</span>
+            <strong id="scoreTotal">0</strong>
+          </div>
+        </div>
+        <div id="scoreBreakdown" class="score-breakdown"></div>
+        <div class="score-table-wrap">
+          <table class="score-table">
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th>Tu porra</th>
+                <th>Real</th>
+                <th>Detalle</th>
+                <th>Pts</th>
+              </tr>
+            </thead>
+            <tbody id="scoreRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <section class="panel matches-panel" aria-label="Partidos">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Partidos</p>
+              <h2>Tus resultados vs reales</h2>
+            </div>
+            <select id="stageSelect" aria-label="Filtrar por fase"></select>
+          </div>
+
+          <div id="matchFilters" class="segmented" aria-label="Filtros de acierto">
+            <button type="button" data-filter="all" class="is-active">Todos</button>
+            <button type="button" data-filter="exact">Exactos</button>
+            <button type="button" data-filter="sign">Signo</button>
+            <button type="button" data-filter="miss">Fallos</button>
+            <button type="button" data-filter="pending">Pendientes</button>
+          </div>
+
+          <div id="matchesList" class="match-list"></div>
+        </section>
+
+        <aside class="panel standings-panel" aria-label="Clasificacion">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Clasificacion</p>
+              <h2>Grupo <span id="currentGroupLabel">A</span></h2>
+            </div>
+          </div>
+          <div id="groupTabs" class="group-tabs" aria-label="Grupos"></div>
+          <div id="classificationNote" class="classification-note"></div>
+          <div class="standings-grid">
+            <div>
+              <h3>Tu porra</h3>
+              <div id="predictedStandings"></div>
+            </div>
+            <div>
+              <h3>Real</h3>
+              <div id="realStandings"></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel honors-panel" aria-label="Cuadro de honor">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Cuadro</p>
+            <h2>Pronostico final</h2>
+          </div>
+        </div>
+        <div id="honorsList" class="honors-list"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
