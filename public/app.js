@@ -154,12 +154,14 @@ function bindElements() {
     "predictedStandings",
     "realStandings",
     "honorsList",
+    "bracketGrid",
     "scoreTotal",
     "scoreBreakdown",
     "scoreRows",
     "activePlayerName",
     "activePlayerNameMatches",
-    "activePlayerNameStandings"
+    "activePlayerNameStandings",
+    "activePlayerNameBracket"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -326,7 +328,7 @@ function renderPlayerOptions() {
 function renderActivePlayerLabels() {
   if (!state.data) return;
   const name = state.data.name || "Participante";
-  [els.activePlayerName, els.activePlayerNameMatches, els.activePlayerNameStandings].forEach((element) => {
+  [els.activePlayerName, els.activePlayerNameMatches, els.activePlayerNameStandings, els.activePlayerNameBracket].forEach((element) => {
     if (element) element.textContent = name;
   });
 }
@@ -356,6 +358,7 @@ function renderAll() {
   renderFinalizedMatches();
   renderStandings();
   renderHonors();
+  renderBracket();
 }
 
 function renderKpis() {
@@ -814,6 +817,64 @@ function renderHonors() {
     .join("");
 }
 
+function renderBracket() {
+  const stages = ["Dieciseisavos", "Octavos", "Cuartos", "Semifinales", "Tercer puesto", "Final"];
+  const columns = stages
+    .map((stage) => {
+      const matches = state.data.matches
+        .filter((match) => match.stage === stage)
+        .sort((a, b) => a.id - b.id);
+
+      if (!matches.length) return "";
+
+      return `
+        <section class="bracket-column" aria-label="${escapeHtml(stage)}">
+          <div class="bracket-stage-head">
+            <strong>${escapeHtml(stage)}</strong>
+            <span>${matches.length} ${matches.length === 1 ? "partido" : "partidos"}</span>
+          </div>
+          <div class="bracket-matches">
+            ${matches.map((match) => renderBracketMatch(match)).join("")}
+          </div>
+        </section>
+      `;
+    })
+    .filter(Boolean);
+
+  els.bracketGrid.innerHTML = columns.length
+    ? columns.join("")
+    : `<div class="empty-state">Sin eliminatorias en esta porra.</div>`;
+}
+
+function renderBracketMatch(match) {
+  const winner = predictedWinnerName(match);
+  const winnerKey = canonical(winner);
+  const isFinal = match.stage === "Final";
+  const isThird = match.stage === "Tercer puesto";
+  const resultLabel = isFinal ? "Campeon" : isThird ? "Gana" : "Pasa";
+
+  return `
+    <article class="bracket-match">
+      <div class="bracket-match-head">
+        <span>#${match.id}</span>
+        <strong>${escapeHtml(formatDateTime(match.dateTime))}</strong>
+      </div>
+      <div class="bracket-team ${canonical(match.homeTeam) === winnerKey ? "is-winner" : ""}">
+        <span>${escapeHtml(match.homeTeam)}</span>
+        <strong>${numberOrDash(match.homeGoals)}</strong>
+      </div>
+      <div class="bracket-team ${canonical(match.awayTeam) === winnerKey ? "is-winner" : ""}">
+        <span>${escapeHtml(match.awayTeam)}</span>
+        <strong>${numberOrDash(match.awayGoals)}</strong>
+      </div>
+      <div class="bracket-advance">
+        <span>${resultLabel}</span>
+        <strong>${escapeHtml(winner || "-")}</strong>
+      </div>
+    </article>
+  `;
+}
+
 function compareMatch(match) {
   const predicted = typeof match.homeGoals === "number" && typeof match.awayGoals === "number";
   const paired = findRealMatch(match);
@@ -998,6 +1059,7 @@ function predictedWinnerName(match) {
   if (match.homeGoals > match.awayGoals) return match.homeTeam;
   if (match.homeGoals < match.awayGoals) return match.awayTeam;
   if (match.stage === "Final" && state.data.honors && state.data.honors.champion) return state.data.honors.champion;
+  if (match.stage === "Tercer puesto" && state.data.honors && state.data.honors.third) return state.data.honors.third;
 
   const home = canonical(match.homeTeam);
   const away = canonical(match.awayTeam);
