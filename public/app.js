@@ -911,31 +911,58 @@ function renderHonors() {
 
 function renderBracket() {
   const stages = ["Dieciseisavos", "Octavos", "Cuartos", "Semifinales", "Tercer puesto", "Final"];
-  const columns = stages
+  const rounds = stages
     .map((stage) => {
       const matches = state.data.matches
         .filter((match) => match.stage === stage)
         .sort((a, b) => a.id - b.id);
-
-      if (!matches.length) return "";
-
-      return `
-        <section class="bracket-column" aria-label="${escapeHtml(stage)}">
-          <div class="bracket-stage-head">
-            <strong>${escapeHtml(stage)}</strong>
-            <span>${matches.length} ${matches.length === 1 ? "partido" : "partidos"}</span>
-          </div>
-          <div class="bracket-matches">
-            ${matches.map((match) => renderBracketMatch(match)).join("")}
-          </div>
-        </section>
-      `;
+      if (!matches.length) return null;
+      return { stage, matches, progress: bracketStageProgress(matches) };
     })
     .filter(Boolean);
 
-  els.bracketGrid.innerHTML = columns.length
-    ? columns.join("")
+  const currentIndex = rounds.findIndex((round) => !round.progress.complete);
+  const visibleEnd = currentIndex === -1 ? rounds.length : currentIndex + 1;
+  const visibleRounds = rounds.slice(0, visibleEnd);
+
+  els.bracketGrid.innerHTML = visibleRounds.length
+    ? visibleRounds
+        .map((round, index) => renderBracketRound(round, index === visibleRounds.length - 1))
+        .join("")
     : `<div class="empty-state">Sin eliminatorias en esta porra.</div>`;
+}
+
+function bracketStageProgress(matches) {
+  const comparisons = matches.map(compareMatch);
+  const finals = comparisons.filter((comparison) => comparison.realFinal).length;
+  const live = comparisons.filter((comparison) => comparison.realLive).length;
+  const complete = matches.length > 0 && finals === matches.length;
+  const label = complete
+    ? "Completada"
+    : live > 0
+      ? "En juego"
+      : finals > 0
+        ? `${finals}/${matches.length} finalizados`
+        : "Siguiente ronda";
+  return { finals, live, complete, label };
+}
+
+function renderBracketRound(round, isCurrent) {
+  const matchLabel = `${round.matches.length} ${round.matches.length === 1 ? "partido" : "partidos"}`;
+  return `
+    <details class="bracket-stage"${isCurrent ? " open" : ""}>
+      <summary>
+        <span>
+          <strong>${escapeHtml(round.stage)}</strong>
+          <small>${escapeHtml(round.progress.label)} · ${matchLabel}</small>
+        </span>
+        <span class="bracket-stage-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="bracket-matches" aria-label="Partidos de ${escapeHtml(round.stage)}">
+        ${round.matches.map((match) => renderBracketMatch(match)).join("")}
+      </div>
+    </details>
+  `;
 }
 
 function renderBracketMatch(match) {
