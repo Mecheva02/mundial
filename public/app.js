@@ -392,8 +392,95 @@ function renderScoring() {
     : `<div class="empty-state compact">Sin puntos reales todavia.</div>`;
 
   els.scoreRows.innerHTML = scoring.rows.length
-    ? scoring.rows.map(renderScoreRow).join("")
-    : `<tr><td colspan="5" class="empty-cell">Todavia no hay partidos puntuables.</td></tr>`;
+    ? renderScoreHistory(scoring.rows)
+    : `<div class="empty-state">Todavia no hay partidos puntuables.</div>`;
+}
+
+function renderScoreHistory(rows) {
+  const ordered = [...rows].sort(compareScoreRowsNewestFirst);
+  const latest = ordered.find((row) => row.kind === "match" && row.isFinal) || ordered[0];
+  const previous = ordered.filter((row) => row !== latest);
+  const groups = groupScoreRows(previous);
+  const latestLabel = latest.isProvisional ? "En juego" : "Ultimo jugado";
+
+  return `
+    <section class="score-latest" aria-label="${latestLabel}">
+      <div class="score-history-heading">
+        <span>${latestLabel}</span>
+        <strong>${escapeHtml(compactScoreConcept(latest).title)}</strong>
+      </div>
+      ${renderScoreTable([latest])}
+    </section>
+    ${groups.length ? `<div class="score-archive">${groups.map(renderScoreGroup).join("")}</div>` : ""}
+  `;
+}
+
+function groupScoreRows(rows) {
+  const grouped = new Map();
+  rows.forEach((row) => {
+    const label = scoreGroupLabel(row.phase);
+    if (!grouped.has(label)) grouped.set(label, []);
+    grouped.get(label).push(row);
+  });
+
+  return Array.from(grouped.entries())
+    .map(([label, items]) => ({ label, rows: items.sort(compareScoreRowsNewestFirst) }))
+    .sort((a, b) => scoreRowSortValue(b.rows[0]) - scoreRowSortValue(a.rows[0]));
+}
+
+function renderScoreGroup(group) {
+  return `
+    <details class="score-phase-group">
+      <summary>
+        <span>
+          <strong>${escapeHtml(group.label)}</strong>
+          <small>${group.rows.length} ${group.rows.length === 1 ? "anterior" : "anteriores"}</small>
+        </span>
+        <span class="score-phase-arrow" aria-hidden="true"></span>
+      </summary>
+      ${renderScoreTable(group.rows)}
+    </details>
+  `;
+}
+
+function renderScoreTable(rows) {
+  return `
+    <div class="score-table-wrap">
+      <table class="score-table">
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Porra</th>
+            <th>Real</th>
+            <th>Detalle</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody>${rows.map(renderScoreRow).join("")}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function compareScoreRowsNewestFirst(a, b) {
+  const timeDifference = scoreRowSortValue(b) - scoreRowSortValue(a);
+  return timeDifference || (b.sequence || 0) - (a.sequence || 0);
+}
+
+function scoreRowSortValue(row) {
+  if (Number.isFinite(row.sortTime)) return row.sortTime;
+  const phase = scoreGroupLabel(row.phase);
+  const phaseTimes = state.data.matches
+    .filter((match) => match.stage === phase || (phase === "Grupos" && match.stage === "Grupos"))
+    .map((match) => matchTimeValue(match))
+    .filter(Number.isFinite);
+  return phaseTimes.length ? Math.max(...phaseTimes) + 1 : phaseOrder(row.phase);
+}
+
+function scoreGroupLabel(phase) {
+  if (phase === "Clasificacion grupos") return "Grupos";
+  if (phase === "Final honores") return "Final";
+  return String(phase || "Otros").replace(/ clasificados$/i, "");
 }
 
 function renderScoreRow(row) {
@@ -432,8 +519,9 @@ function calculateScoring() {
   const totals = new Map();
 
   const addRow = (row) => {
-    rows.push(row);
-    totals.set(row.phase, (totals.get(row.phase) || 0) + row.points);
+    const normalized = { ...row, sequence: rows.length };
+    rows.push(normalized);
+    totals.set(normalized.phase, (totals.get(normalized.phase) || 0) + normalized.points);
   };
 
   state.data.matches.forEach((match) => {
@@ -450,7 +538,11 @@ function calculateScoring() {
         : "-",
       detail: comparison.realLive ? `${scored.detail} · provisional, no suma` : scored.detail,
       points: comparison.realLive ? 0 : scored.points,
-      displayPoints: comparison.realLive ? `${scored.points} prov.` : scored.points
+      displayPoints: comparison.realLive ? `${scored.points} prov.` : scored.points,
+      kind: "match",
+      isFinal: comparison.realFinal,
+      isProvisional: comparison.realLive,
+      sortTime: matchTimeValue(match)
     });
   });
 
@@ -461,10 +553,10 @@ function calculateScoring() {
   const breakdown = Array.from(totals.entries())
     .map(([label, points]) => ({ label, points }))
     .filter((item) => item.points !== 0)
-    .sort((a, b) => phaseOrder(a.label) - phaseOrder(b.label));
+    .sort((a, b) => phaseOrder(b.label) - phaseOrder(a.label));
 
   const total = rows.reduce((sum, row) => sum + row.points, 0);
-  return { total, rows, breakdown };
+  return { total, rows: rows.sort(compareScoreRowsNewestFirst), breakdown };
 }
 
 function scoreMatchResult(match, comparison) {
