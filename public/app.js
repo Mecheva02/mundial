@@ -731,7 +731,29 @@ function renderMatches() {
     return;
   }
 
-  els.matchesList.innerHTML = rows.map(renderMatchRow).join("");
+  const visibleRows = rows.slice(0, 2);
+  const hiddenRows = rows.slice(2);
+  els.matchesList.innerHTML = `
+    ${visibleRows.map(renderMatchRow).join("")}
+    ${hiddenRows.length ? renderUpcomingMatchesDropdown(hiddenRows) : ""}
+  `;
+}
+
+function renderUpcomingMatchesDropdown(rows) {
+  return `
+    <details class="upcoming-more">
+      <summary>
+        <span>
+          <strong>Mas partidos</strong>
+          <small>${rows.length} ${rows.length === 1 ? "proximo" : "proximos"}</small>
+        </span>
+        <span class="upcoming-more-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="upcoming-more-list">
+        ${rows.map(renderMatchRow).join("")}
+      </div>
+    </details>
+  `;
 }
 
 function renderFinalizedMatches() {

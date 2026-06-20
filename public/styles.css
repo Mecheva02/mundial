@@ -605,6 +605,61 @@ summary.panel-heading::-webkit-details-marker {
   gap: 0;
 }
 
+.upcoming-more {
+  background: #ffffff;
+}
+
+.upcoming-more summary {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+  list-style: none;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
+}
+
+.upcoming-more summary::-webkit-details-marker {
+  display: none;
+}
+
+.upcoming-more summary > span:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.upcoming-more summary strong {
+  font-size: 15px;
+}
+
+.upcoming-more summary small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.upcoming-more-arrow {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-right: 2px solid var(--header-1);
+  border-bottom: 2px solid var(--header-1);
+  transform: rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.upcoming-more[open] .upcoming-more-arrow {
+  transform: rotate(225deg);
+}
+
+.upcoming-more-list {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+
 .match-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
