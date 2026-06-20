@@ -116,31 +116,31 @@ select:focus-visible {
 }
 
 .header-tools {
-  display: grid;
-  justify-items: end;
-  gap: 10px;
-  width: min(420px, 100%);
+  display: flex;
+  justify-content: flex-end;
+  width: auto;
 }
 
 .header-player {
-  width: min(260px, 100%);
-  display: grid;
-  gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .header-player label {
   color: rgba(255, 255, 255, 0.78);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
-  text-align: right;
-  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .header-player select {
-  width: 100%;
-  min-height: 42px;
+  width: 140px;
+  min-height: 36px;
   border-color: rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.96);
+  padding: 0 9px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -156,14 +156,14 @@ select:focus-visible {
   color: rgba(255, 255, 255, 0.74);
 }
 
-.top-status {
+.data-status {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
 }
 
-.top-status span,
+.data-status span,
 .pill {
   display: inline-flex;
   align-items: center;
@@ -178,11 +178,10 @@ select:focus-visible {
   white-space: nowrap;
 }
 
-.top-status span {
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-  backdrop-filter: blur(10px);
+.data-status span {
+  border-color: var(--line);
+  background: #f4f8fa;
+  color: #5e7080;
 }
 
 .app-shell {
@@ -256,6 +255,12 @@ select:focus-visible {
   border-radius: 8px;
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
+}
+
+.control-feedback {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
 
 .token-field {
@@ -1242,7 +1247,7 @@ tr.is-top td {
     align-items: stretch;
   }
 
-  .message {
+  .control-feedback {
     grid-column: 1 / -1;
   }
 
@@ -1277,23 +1282,19 @@ tr.is-top td {
   }
 
   .header-tools {
-    width: 100%;
-    justify-items: stretch;
+    width: auto;
+    align-self: flex-end;
   }
 
   .header-player {
-    width: 100%;
+    width: auto;
   }
 
-  .header-player label {
-    text-align: left;
-  }
-
-  .top-status {
+  .data-status {
     justify-content: flex-start;
   }
 
-  .top-status span {
+  .data-status span {
     min-height: 34px;
     padding: 0 13px;
     font-size: 14px;

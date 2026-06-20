@@ -17,12 +17,8 @@
       </div>
       <div class="header-tools">
         <div class="header-player">
-          <label for="playerSelect">Porra activa</label>
+          <label for="playerSelect">Usuario:</label>
           <select id="playerSelect" aria-label="Elegir participante"></select>
-        </div>
-        <div class="top-status" aria-live="polite">
-          <span id="sourceStatus">Excel pendiente</span>
-          <span id="apiStatus">Real sin conectar</span>
         </div>
       </div>
     </header>
@@ -165,7 +161,13 @@
           <input id="autoRefresh" type="checkbox">
           <span>Auto</span>
         </label>
-        <div id="message" class="message" role="status"></div>
+        <div class="control-feedback">
+          <div id="message" class="message" role="status"></div>
+          <div class="data-status" aria-live="polite">
+            <span id="sourceStatus">Excel pendiente</span>
+            <span id="apiStatus">Real sin conectar</span>
+          </div>
+        </div>
       </section>
     </main>
 
