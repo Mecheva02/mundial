@@ -25,14 +25,41 @@
 
     <main class="app-shell">
       <nav class="section-nav" aria-label="Navegacion de la porra">
+        <a href="#proximos">Proximos</a>
+        <a href="#puntuacion">Puntos</a>
         <a href="#resumen">Resumen</a>
         <a href="#clasificacion">Clasificacion</a>
         <a href="#pronostico">Pronostico</a>
         <a href="#eliminatorias">Eliminatorias</a>
-        <a href="#puntuacion">Puntos</a>
-        <a href="#proximos">Proximos</a>
         <a href="#finalizados">Finalizados</a>
       </nav>
+
+      <section id="proximos" class="panel matches-panel" aria-label="Proximos partidos">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Partidos</p>
+            <h2>Proximos de <span id="activePlayerNameMatches">Miguel</span></h2>
+          </div>
+          <select id="stageSelect" aria-label="Filtrar por fase"></select>
+        </div>
+
+        <div id="matchesList" class="match-list"></div>
+      </section>
+
+      <section id="puntuacion" class="panel scoring-panel" aria-label="Puntuacion">
+        <div class="panel-heading compact-heading">
+          <div>
+            <p class="eyebrow">Puntos</p>
+            <h2>Puntuacion de <span id="activePlayerName">Miguel</span></h2>
+          </div>
+          <div class="score-total">
+            <span>Total</span>
+            <strong id="scoreTotal">0</strong>
+          </div>
+        </div>
+        <div id="scoreBreakdown" class="score-breakdown"></div>
+        <div id="scoreRows" class="score-history"></div>
+      </section>
 
       <section id="resumen" class="kpi-grid" aria-label="Resumen">
         <article class="kpi is-score">
@@ -62,13 +89,14 @@
       </section>
 
       <section class="top-panels">
-        <aside id="clasificacion" class="panel standings-panel" aria-label="Clasificacion">
-          <div class="panel-heading">
+        <details id="clasificacion" class="panel standings-panel classification-panel" aria-label="Clasificacion">
+          <summary class="panel-heading">
             <div>
               <p class="eyebrow">Clasificacion</p>
               <h2>Grupo <span id="currentGroupLabel">A</span></h2>
             </div>
-          </div>
+            <span class="summary-caret">Ver</span>
+          </summary>
           <div id="groupTabs" class="group-tabs" aria-label="Grupos"></div>
           <div id="classificationNote" class="classification-note"></div>
           <div class="standings-grid">
@@ -81,7 +109,7 @@
               <div id="realStandings"></div>
             </div>
           </div>
-        </aside>
+        </details>
 
         <details id="pronostico" class="panel honors-panel forecast-panel" aria-label="Cuadro de honor">
           <summary class="panel-heading">
@@ -106,35 +134,7 @@
         <div id="bracketGrid" class="bracket-grid"></div>
       </section>
 
-      <section id="puntuacion" class="panel scoring-panel" aria-label="Puntuacion">
-        <div class="panel-heading compact-heading">
-          <div>
-            <p class="eyebrow">Puntos</p>
-            <h2>Puntuacion de <span id="activePlayerName">Miguel</span></h2>
-          </div>
-          <div class="score-total">
-            <span>Total</span>
-            <strong id="scoreTotal">0</strong>
-          </div>
-        </div>
-        <div id="scoreBreakdown" class="score-breakdown"></div>
-        <div id="scoreRows" class="score-history"></div>
-      </section>
-
-      <section class="workspace">
-        <section id="proximos" class="panel matches-panel" aria-label="Proximos partidos">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">Partidos</p>
-              <h2>Proximos de <span id="activePlayerNameMatches">Miguel</span></h2>
-            </div>
-            <select id="stageSelect" aria-label="Filtrar por fase"></select>
-          </div>
-
-          <div id="matchesList" class="match-list"></div>
-        </section>
-
-        <details id="finalizados" class="panel finalized-panel" aria-label="Partidos finalizados">
+      <details id="finalizados" class="panel finalized-panel" aria-label="Partidos finalizados">
           <summary class="panel-heading">
             <div>
               <p class="eyebrow">Cerrados</p>
@@ -151,8 +151,7 @@
           </div>
 
           <div id="finalizedList" class="finalized-list"></div>
-        </details>
-      </section>
+      </details>
 
       <section id="ajustes" class="control-band" aria-label="Conexion de datos reales">
         <div class="token-field">
