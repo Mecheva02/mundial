@@ -619,6 +619,73 @@ select {
   background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
 }
 
+#proximos {
+  --section-accent: #256ea8;
+  --section-tint: rgba(37, 110, 168, 0.09);
+}
+
+#puntuacion {
+  --section-accent: #6750a4;
+  --section-tint: rgba(103, 80, 164, 0.09);
+}
+
+#clasificacion {
+  --section-accent: #16804e;
+  --section-tint: rgba(22, 128, 78, 0.09);
+}
+
+#pronostico {
+  --section-accent: #bf7a1b;
+  --section-tint: rgba(191, 122, 27, 0.1);
+}
+
+#eliminatorias {
+  --section-accent: #078c86;
+  --section-tint: rgba(7, 140, 134, 0.09);
+}
+
+#finalizados {
+  --section-accent: #c64738;
+  --section-tint: rgba(198, 71, 56, 0.08);
+}
+
+#proximos,
+#puntuacion,
+#clasificacion,
+#pronostico,
+#eliminatorias,
+#finalizados {
+  border-top: 4px solid var(--section-accent);
+}
+
+#proximos > .panel-heading,
+#puntuacion > .panel-heading,
+#clasificacion > .panel-heading,
+#pronostico > .panel-heading,
+#eliminatorias > .panel-heading,
+#finalizados > .panel-heading {
+  background: linear-gradient(90deg, var(--section-tint) 0%, #ffffff 54%);
+}
+
+#proximos > .panel-heading .eyebrow,
+#puntuacion > .panel-heading .eyebrow,
+#clasificacion > .panel-heading .eyebrow,
+#pronostico > .panel-heading .eyebrow,
+#eliminatorias > .panel-heading .eyebrow,
+#finalizados > .panel-heading .eyebrow {
+  color: var(--section-accent);
+}
+
+#puntuacion .score-total strong,
+#puntuacion .score-history-heading strong {
+  color: var(--section-accent);
+}
+
+#ajustes {
+  border-top: 4px solid #607383;
+  background: linear-gradient(90deg, rgba(96, 115, 131, 0.07) 0%, rgba(255, 255, 255, 0.94) 45%);
+}
+
 summary.panel-heading {
   cursor: pointer;
   list-style: none;
