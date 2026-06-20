@@ -139,6 +139,7 @@ function bindElements() {
     "refreshButton",
     "autoRefresh",
     "message",
+    "kpiScore",
     "kpiPredictions",
     "kpiFinals",
     "kpiSigns",
@@ -378,6 +379,7 @@ function renderKpis() {
 
 function renderScoring() {
   const scoring = calculateScoring();
+  els.kpiScore.textContent = String(scoring.total);
   els.scoreTotal.textContent = String(scoring.total);
   els.scoreBreakdown.innerHTML = scoring.breakdown.length
     ? scoring.breakdown
