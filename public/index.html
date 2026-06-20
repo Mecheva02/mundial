@@ -10,25 +10,35 @@
   </head>
   <body>
     <header class="topbar">
-      <div>
+      <div class="brand-block">
         <p class="eyebrow">Porra local</p>
         <h1>Mundial 2026</h1>
+        <p class="developer-credit">Desarrollado por Miguel Echevarria</p>
       </div>
-      <div class="top-status" aria-live="polite">
-        <span id="sourceStatus">Excel pendiente</span>
-        <span id="apiStatus">Real sin conectar</span>
+      <div class="header-tools">
+        <div class="header-player">
+          <label for="playerSelect">Porra activa</label>
+          <select id="playerSelect" aria-label="Elegir participante"></select>
+        </div>
+        <div class="top-status" aria-live="polite">
+          <span id="sourceStatus">Excel pendiente</span>
+          <span id="apiStatus">Real sin conectar</span>
+        </div>
       </div>
     </header>
 
     <main class="app-shell">
-      <section class="player-band" aria-label="Selector de porra">
-        <div class="token-field player-field">
-          <label for="playerSelect">Porra activa</label>
-          <select id="playerSelect" aria-label="Elegir participante"></select>
-        </div>
-      </section>
+      <nav class="section-nav" aria-label="Navegacion de la porra">
+        <a href="#resumen">Resumen</a>
+        <a href="#clasificacion">Clasificacion</a>
+        <a href="#pronostico">Pronostico</a>
+        <a href="#eliminatorias">Eliminatorias</a>
+        <a href="#puntuacion">Puntos</a>
+        <a href="#proximos">Proximos</a>
+        <a href="#finalizados">Finalizados</a>
+      </nav>
 
-      <section class="kpi-grid" aria-label="Resumen">
+      <section id="resumen" class="kpi-grid" aria-label="Resumen">
         <article class="kpi">
           <span class="kpi-label">Pronosticos</span>
           <strong id="kpiPredictions">-</strong>
@@ -52,7 +62,7 @@
       </section>
 
       <section class="top-panels">
-        <aside class="panel standings-panel" aria-label="Clasificacion">
+        <aside id="clasificacion" class="panel standings-panel" aria-label="Clasificacion">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Clasificacion</p>
@@ -73,7 +83,7 @@
           </div>
         </aside>
 
-        <details class="panel honors-panel forecast-panel" aria-label="Cuadro de honor">
+        <details id="pronostico" class="panel honors-panel forecast-panel" aria-label="Cuadro de honor">
           <summary class="panel-heading">
             <div>
               <p class="eyebrow">Cuadro</p>
@@ -85,7 +95,7 @@
         </details>
       </section>
 
-      <section class="panel bracket-panel" aria-label="Cuadro de eliminatorias">
+      <section id="eliminatorias" class="panel bracket-panel" aria-label="Cuadro de eliminatorias">
         <div class="panel-heading">
           <div>
             <p class="eyebrow">Eliminatorias</p>
@@ -96,7 +106,7 @@
         <div id="bracketGrid" class="bracket-grid"></div>
       </section>
 
-      <section class="panel scoring-panel" aria-label="Puntuacion">
+      <section id="puntuacion" class="panel scoring-panel" aria-label="Puntuacion">
         <div class="panel-heading compact-heading">
           <div>
             <p class="eyebrow">Puntos</p>
@@ -112,7 +122,7 @@
       </section>
 
       <section class="workspace">
-        <section class="panel matches-panel" aria-label="Proximos partidos">
+        <section id="proximos" class="panel matches-panel" aria-label="Proximos partidos">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Partidos</p>
@@ -124,7 +134,7 @@
           <div id="matchesList" class="match-list"></div>
         </section>
 
-        <details class="panel finalized-panel" aria-label="Partidos finalizados">
+        <details id="finalizados" class="panel finalized-panel" aria-label="Partidos finalizados">
           <summary class="panel-heading">
             <div>
               <p class="eyebrow">Cerrados</p>
@@ -144,7 +154,7 @@
         </details>
       </section>
 
-      <section class="control-band" aria-label="Conexion de datos reales">
+      <section id="ajustes" class="control-band" aria-label="Conexion de datos reales">
         <div class="token-field">
           <label for="tokenInput">Football-Data token opcional</label>
           <input id="tokenInput" type="password" autocomplete="off" placeholder="ESPN actualiza sin token">

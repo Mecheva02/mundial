@@ -22,6 +22,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   background:
@@ -66,7 +70,7 @@ select:focus-visible {
 .topbar {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
   padding: 28px clamp(18px, 4vw, 44px) 22px;
@@ -102,6 +106,42 @@ select:focus-visible {
   font-size: 36px;
   line-height: 1.1;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+}
+
+.developer-credit {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.header-tools {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+  width: min(420px, 100%);
+}
+
+.header-player {
+  width: min(260px, 100%);
+  display: grid;
+  gap: 5px;
+}
+
+.header-player label {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.header-player select {
+  width: 100%;
+  min-height: 42px;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.96);
+  font-weight: 800;
 }
 
 .eyebrow {
@@ -153,18 +193,56 @@ select:focus-visible {
   padding: 22px clamp(14px, 3vw, 32px) 34px;
 }
 
-.player-band {
+.section-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
-  justify-content: flex-start;
-  padding: 14px 16px;
+  gap: 4px;
+  padding: 8px;
+  overflow-x: auto;
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(214, 225, 231, 0.9);
   border-radius: 8px;
   box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  scrollbar-width: none;
 }
 
-.player-band .player-field {
-  width: min(360px, 100%);
+.section-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.section-nav a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 0 12px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-nav a:hover,
+.section-nav a:focus-visible {
+  background: #eaf2f5;
+  color: var(--header-1);
+  outline: none;
+}
+
+#resumen,
+#clasificacion,
+#pronostico,
+#eliminatorias,
+#puntuacion,
+#proximos,
+#finalizados,
+#ajustes {
+  scroll-margin-top: 72px;
 }
 
 .control-band {
@@ -199,10 +277,6 @@ select {
   background: #fbfdfe;
   color: var(--ink);
   padding: 0 12px;
-}
-
-.player-field select {
-  width: 100%;
 }
 
 #refreshButton {
@@ -1202,6 +1276,19 @@ tr.is-top td {
     font-size: 32px;
   }
 
+  .header-tools {
+    width: 100%;
+    justify-items: stretch;
+  }
+
+  .header-player {
+    width: 100%;
+  }
+
+  .header-player label {
+    text-align: left;
+  }
+
   .top-status {
     justify-content: flex-start;
   }
@@ -1223,8 +1310,11 @@ tr.is-top td {
     grid-template-columns: 1fr;
   }
 
-  .player-band {
-    padding: 12px;
+  .section-nav {
+    margin: 0 -14px;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
   }
 
   .control-band {
