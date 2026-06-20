@@ -148,6 +148,7 @@ function bindElements() {
     "matchFilters",
     "matchesList",
     "finalizedList",
+    "finalizedCount",
     "groupTabs",
     "currentGroupLabel",
     "classificationNote",
@@ -757,15 +758,17 @@ function renderUpcomingMatchesDropdown(rows) {
 }
 
 function renderFinalizedMatches() {
-  const rows = state.data.matches
+  const finalizedRows = state.data.matches
     .map((match) => {
       const comparison = compareMatch(match);
       const scored = scoreMatchResult(match, comparison);
       return { match, comparison, scored };
     })
     .filter(({ match, comparison }) => (state.stage === "all" || match.stage === state.stage) && comparison.realFinal)
-    .filter(({ comparison }) => filterComparison(comparison))
-    .sort((a, b) => matchTimeValue(a.match) - matchTimeValue(b.match));
+    .sort((a, b) => matchTimeValue(b.match) - matchTimeValue(a.match) || b.match.id - a.match.id);
+  const rows = finalizedRows.filter(({ comparison }) => filterComparison(comparison));
+
+  els.finalizedCount.textContent = String(finalizedRows.length);
 
   if (!rows.length) {
     els.finalizedList.innerHTML = `<div class="empty-state">Todavia no hay partidos finalizados para este filtro.</div>`;

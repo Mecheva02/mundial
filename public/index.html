@@ -124,13 +124,14 @@
           <div id="matchesList" class="match-list"></div>
         </section>
 
-        <section class="panel finalized-panel" aria-label="Partidos finalizados">
-          <div class="panel-heading">
+        <details class="panel finalized-panel" aria-label="Partidos finalizados">
+          <summary class="panel-heading">
             <div>
               <p class="eyebrow">Cerrados</p>
-              <h2>Finalizados</h2>
+              <h2>Finalizados <span id="finalizedCount" class="heading-count">0</span></h2>
             </div>
-          </div>
+            <span class="summary-caret">Ver</span>
+          </summary>
 
           <div id="matchFilters" class="segmented" aria-label="Filtros de acierto">
             <button type="button" data-filter="all" class="is-active">Todos</button>
@@ -140,7 +141,7 @@
           </div>
 
           <div id="finalizedList" class="finalized-list"></div>
-        </section>
+        </details>
       </section>
 
       <section class="control-band" aria-label="Conexion de datos reales">
