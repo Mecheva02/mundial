@@ -922,13 +922,17 @@ function renderBracket() {
     .filter(Boolean);
 
   const currentIndex = rounds.findIndex((round) => !round.progress.complete);
-  const visibleEnd = currentIndex === -1 ? rounds.length : currentIndex + 1;
-  const visibleRounds = rounds.slice(0, visibleEnd);
+  const activeIndex = currentIndex === -1 ? Math.max(0, rounds.length - 1) : currentIndex;
+  const activeRound = rounds[activeIndex];
+  const previousRounds = rounds.slice(0, activeIndex);
+  const futureRounds = rounds.slice(activeIndex + 1);
 
-  els.bracketGrid.innerHTML = visibleRounds.length
-    ? visibleRounds
-        .map((round, index) => renderBracketRound(round, index === visibleRounds.length - 1))
-        .join("")
+  els.bracketGrid.innerHTML = activeRound
+    ? `
+        ${previousRounds.length ? renderBracketRoundGroup("Rondas anteriores", previousRounds, "previous") : ""}
+        ${renderVisibleBracketRound(activeRound)}
+        ${futureRounds.length ? renderBracketRoundGroup("Rondas siguientes", futureRounds, "future") : ""}
+      `
     : `<div class="empty-state">Sin eliminatorias en esta porra.</div>`;
 }
 
@@ -947,21 +951,59 @@ function bracketStageProgress(matches) {
   return { finals, live, complete, label };
 }
 
-function renderBracketRound(round, isCurrent) {
-  const matchLabel = `${round.matches.length} ${round.matches.length === 1 ? "partido" : "partidos"}`;
+function renderVisibleBracketRound(round) {
   return `
-    <details class="bracket-stage"${isCurrent ? " open" : ""}>
+    <section class="bracket-visible-round" aria-label="${escapeHtml(round.stage)}">
+      ${renderBracketRoundHeading(round)}
+      ${renderBracketMatches(round)}
+    </section>
+  `;
+}
+
+function renderBracketRoundGroup(label, rounds, type) {
+  const roundNames = rounds.map((round) => round.stage).join(" · ");
+  return `
+    <details class="bracket-rounds-more is-${type}">
       <summary>
         <span>
-          <strong>${escapeHtml(round.stage)}</strong>
-          <small>${escapeHtml(round.progress.label)} · ${matchLabel}</small>
+          <strong>${escapeHtml(label)}</strong>
+          <small>${escapeHtml(roundNames)}</small>
         </span>
         <span class="bracket-stage-arrow" aria-hidden="true"></span>
       </summary>
-      <div class="bracket-matches" aria-label="Partidos de ${escapeHtml(round.stage)}">
-        ${round.matches.map((match) => renderBracketMatch(match)).join("")}
+      <div class="bracket-rounds-list">
+        ${rounds
+          .map(
+            (round) => `
+              <section class="bracket-preview-round" aria-label="${escapeHtml(round.stage)}">
+                ${renderBracketRoundHeading(round)}
+                ${renderBracketMatches(round)}
+              </section>
+            `
+          )
+          .join("")}
       </div>
     </details>
+  `;
+}
+
+function renderBracketRoundHeading(round) {
+  const matchLabel = `${round.matches.length} ${round.matches.length === 1 ? "partido" : "partidos"}`;
+  return `
+    <div class="bracket-round-heading">
+      <span>
+        <strong>${escapeHtml(round.stage)}</strong>
+        <small>${escapeHtml(round.progress.label)} · ${matchLabel}</small>
+      </span>
+    </div>
+  `;
+}
+
+function renderBracketMatches(round) {
+  return `
+    <div class="bracket-matches" aria-label="Partidos de ${escapeHtml(round.stage)}">
+      ${round.matches.map((match) => renderBracketMatch(match)).join("")}
+    </div>
   `;
 }
 
