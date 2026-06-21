@@ -25,41 +25,14 @@
 
     <main class="app-shell">
       <nav class="section-nav" aria-label="Navegacion de la porra">
+        <a href="#resumen">Resumen</a>
         <a href="#proximos">Proximos</a>
         <a href="#puntuacion">Puntos</a>
-        <a href="#resumen">Resumen</a>
         <a href="#clasificacion">Clasificacion</a>
         <a href="#pronostico">Pronostico</a>
         <a href="#eliminatorias">Eliminatorias</a>
         <a href="#finalizados">Finalizados</a>
       </nav>
-
-      <section id="proximos" class="panel matches-panel" aria-label="Proximos partidos">
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">Partidos</p>
-            <h2>Proximos de <span id="activePlayerNameMatches">Miguel</span></h2>
-          </div>
-          <select id="stageSelect" aria-label="Filtrar por fase"></select>
-        </div>
-
-        <div id="matchesList" class="match-list"></div>
-      </section>
-
-      <section id="puntuacion" class="panel scoring-panel" aria-label="Puntuacion">
-        <div class="panel-heading compact-heading">
-          <div>
-            <p class="eyebrow">Puntos</p>
-            <h2>Puntuacion de <span id="activePlayerName">Miguel</span></h2>
-          </div>
-          <div class="score-total">
-            <span>Total</span>
-            <strong id="scoreTotal">0</strong>
-          </div>
-        </div>
-        <div id="scoreBreakdown" class="score-breakdown"></div>
-        <div id="scoreRows" class="score-history"></div>
-      </section>
 
       <section id="resumen" class="kpi-grid" aria-label="Resumen">
         <article class="kpi is-score">
@@ -86,6 +59,33 @@
           <span class="kpi-label">Top 2 grupos</span>
           <strong id="kpiClassified">-</strong>
         </article>
+      </section>
+
+      <section id="proximos" class="panel matches-panel" aria-label="Proximos partidos">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Partidos</p>
+            <h2>Proximos de <span id="activePlayerNameMatches">Miguel</span></h2>
+          </div>
+          <select id="stageSelect" aria-label="Filtrar por fase"></select>
+        </div>
+
+        <div id="matchesList" class="match-list"></div>
+      </section>
+
+      <section id="puntuacion" class="panel scoring-panel" aria-label="Puntuacion">
+        <div class="panel-heading compact-heading">
+          <div>
+            <p class="eyebrow">Puntos</p>
+            <h2>Puntuacion de <span id="activePlayerName">Miguel</span></h2>
+          </div>
+          <div class="score-total">
+            <span>Total</span>
+            <strong id="scoreTotal">0</strong>
+          </div>
+        </div>
+        <div id="scoreBreakdown" class="score-breakdown"></div>
+        <div id="scoreRows" class="score-history"></div>
       </section>
 
       <section class="top-panels">
